@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Ranked Notes</title>
+    <!-- <button onclick="refresh()">Refresh</button> -->
+</head>
+<body>
+    <h1>Top Ranked Notes</h1>
+    <div id="notes">
+        {% for note in notes %}
+        <div class="note">
+            <h2>{{ note.title }}</h2>
+            <p>Author: {{ note.author }};</p>
+            {% if note.excerpt %}
+            <p> Excerpt: {{ note.excerpt }}</p>
+            {% endif %}
+            <!-- <a href="{{ note.link }}">Link: {{ note.link }}</a> -->
+            <p>Link: <a href="{{ note.link }}" target="_blank">{{ note.link }}</a></p>
+            <button style="font-size: 15px; padding: 8px 15px;" onclick="giveFeedback('{{ note.index }}', 1)">Pro</button>
+            <button style="font-size: 15px; padding: 8px 15px;" onclick="giveFeedback('{{ note.index }}', 0)">Con</button>
+        </div>
+        <hr>
+        {% endfor %}
+    </div>
+
+    <script>
+        function giveFeedback(index, pro) {
+            fetch('/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ index: index, pro: pro })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Feedback submitted successfully');
+                } else {
+                    alert('Failed to submit feedback');
+                }
+            });
+        }
+
+        function refresh() {
+            fetch('/refresh', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Feedback submitted successfully');
+                    //location.reload();
+                } else {
+                    alert('Failed to submit feedback');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
